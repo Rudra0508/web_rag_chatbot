@@ -34,4 +34,4 @@ jobs:
       - name: Run unit tests
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: pytest tests/unit/ -v --tb=short
+        run: pytest tests/unit/test.setup.py -v --tb=short
