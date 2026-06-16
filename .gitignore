@@ -1,0 +1,62 @@
+# ==============================================================================
+# .gitignore — Web RAG Chatbot
+# ==============================================================================
+
+# ── Secrets ───────────────────────────────────────────────────────────────────
+.env
+*.pem
+*.key
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+*.egg
+MANIFEST
+
+# ── Virtual Environments ──────────────────────────────────────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── Data & Models (too large for Git) ────────────────────────────────────────
+data/raw/
+data/processed/
+data/vector_store/
+*.pkl
+*.bin
+*.pt
+*.pth
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── IDE & OS ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Testing & Coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# ── Playwright ────────────────────────────────────────────────────────────────
+playwright/.cache/
