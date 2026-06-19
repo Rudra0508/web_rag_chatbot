@@ -29,7 +29,7 @@ from pathlib import Path        # modern way to work with file paths
 
 import chromadb                                  # local vector database
 import numpy as np                                # numpy arrays (embeddings are numpy arrays)
-from langchain_text_splitters import RecursiveCharacterTextSplitter # smart text splitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter  # smart text splitter
 from loguru import logger                         # pretty, structured logging
 from sentence_transformers import SentenceTransformer  # turns text into embeddings
 
@@ -237,7 +237,22 @@ def store_in_chromadb(
     # previous run), reuse it and just add more chunks to it. If it
     # doesn't exist yet, create it fresh. This makes the function safe
     # to call repeatedly across many documents.
-    collection = client.get_or_create_collection(name=collection_name)
+    #
+    # IMPORTANT: ChromaDB defaults to "l2" (Euclidean) distance, but
+    # all-MiniLM-L6-v2 (our embedding model) produces NORMALIZED vectors
+    # that are specifically designed to be compared with COSINE distance.
+    # Using the wrong distance metric here makes retrieval pick worse
+    # chunks even though it "runs" with no errors — a quiet correctness
+    # bug, not a crash. We explicitly request cosine to match the model.
+    # NOTE: this setting is locked in at CREATION time and can't be
+    # changed on an existing collection — if you already have a
+    # collection from before this fix, delete the chroma_db/ folder
+    # and re-run your embedding step so it gets created fresh with
+    # the correct setting.
+    collection = client.get_or_create_collection(
+        name=collection_name,
+        metadata={"hnsw:space": "cosine"},
+    )
 
     # ChromaDB's .add() wants four separate lists, all the SAME LENGTH
     # and in the SAME ORDER (item 0 in each list belongs together):
@@ -268,9 +283,11 @@ def store_in_chromadb(
 
     documents = [chunk["chunk_text"] for chunk in chunks_with_metadata]
 
-    # Add everything to the collection in one call. ChromaDB handles
-    # writing this to disk under the hood — no extra "save" step needed.
-    collection.add(
+    # upsert() = insert if new, update if already exists. This replaces
+    # add() which crashes or spams warnings when the same chunk IDs are
+    # stored again (e.g. running the embedder twice on the same document).
+    # Safe to call any number of times on the same data.
+    collection.upsert(
         ids=ids,
         embeddings=embeddings_list,
         metadatas=metadatas,

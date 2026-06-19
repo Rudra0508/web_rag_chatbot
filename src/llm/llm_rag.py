@@ -21,9 +21,7 @@ Beginner notes:
   offers a generous free tier — perfect for a learning project like this.
 """
 
-import os
-os.environ["ANONYMIZED_TELEMETRY"] = "False"                    # used to read environment variables (the API key)
-os.environ["OTEL_TRACES_EXPORTER"] = "none"                     # disable OpenTelemetry exporter
+import os                    # used to read environment variables (the API key)
 from pathlib import Path     # modern way to work with file paths
 
 import chromadb                              # the same local vector database from Phase 5
@@ -70,14 +68,18 @@ CHAT_HISTORY_LIMIT = 3
 # into the environment, so os.getenv() below can find GROQ_API_KEY.
 load_dotenv()
 
-# Read the Groq API key from the environment. If it's missing, we still
-# let the file load (so e.g. retrieve_chunks() can be tested on its own
-# without a key) but get_answer() will fail clearly when it actually
-# tries to call the API, rather than failing confusingly at import time.
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# Create the Groq client object we'll use to send chat requests.
-client = Groq(api_key=GROQ_API_KEY)
+# Create the Groq client with an explicit httpx transport timeout so it
+# never hangs silently on Windows — connect=10s prevents indefinite
+# blocking when the TCP connection stalls before any data is sent.
+import httpx as _httpx
+client = Groq(
+    api_key=GROQ_API_KEY,
+    http_client=_httpx.Client(
+        timeout=_httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=5.0)
+    ),
+)
 
 # Connect to the SAME persistent ChromaDB folder Phase 5 wrote chunks
 # into. PersistentClient means it reads/writes real files on disk,
