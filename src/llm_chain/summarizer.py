@@ -21,9 +21,6 @@ techniques are combined:
 import httpx                  # explicit HTTP transport with timeout control
 import json                  # for parsing the LLM's JSON response safely
 import re                    # for filtering citations and fixing JSON
-
-import httpx                 # for transport-level timeout on Groq client
-
 import spacy                                         # NLP library for entity extraction
 from groq import Groq                                 # type hint — real client is passed in
 from loguru import logger                             # pretty, structured logging
@@ -37,7 +34,7 @@ from sumy.summarizers.lex_rank import LexRankSummarizer  # the summarization alg
 # ──────────────────────────────────────────────────────────────────────────
 
 # Same Groq model Phase 6's rag_chain.py uses — consistent across the project.
-GROQ_MODEL_NAME = "llama-3.3-70b-versatile"
+GROQ_MODEL_NAME = "llama-3.1-8b-instant"
 
 # How many characters spaCy processes for entity extraction.
 # Entities repeat throughout a document, so 5000 chars gives good coverage fast.

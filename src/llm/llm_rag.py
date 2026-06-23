@@ -23,7 +23,7 @@ Beginner notes:
 
 import os                    # used to read environment variables (the API key)
 from pathlib import Path     # modern way to work with file paths
-
+import uuid
 import chromadb                              # the same local vector database from Phase 5
 from dotenv import load_dotenv               # loads variables from a .env file
 from groq import Groq                        # official Groq API client

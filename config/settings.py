@@ -18,38 +18,24 @@ class Settings(BaseSettings):
 
     # ── LLM ───────────────────────────────────────────────────────────────────
     groq_api_key: str = ""
-    groq_model: str = "llama3-8b-8192"
+    groq_model: str = "llama-3.1-8b-instant"        # updated: llama3-8b-8192 is decommissioned
 
     # ── Embeddings ────────────────────────────────────────────────────────────
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
-
-    # ── Vector Store ──────────────────────────────────────────────────────────
-    chroma_persist_dir: str = "./data/vector_store"
-    chroma_collection_name: str = "web_rag_collection"
-
-    # ── Redis ─────────────────────────────────────────────────────────────────
-    redis_host: str = "localhost"
-    redis_port: int = 6379
-    redis_password: str = ""
-    redis_db: int = 0
-    redis_ttl_seconds: int = 86400
+    embedding_model: str = "all-MiniLM-L6-v2"       # no prefix — matches SentenceTransformer usage
 
     # ── Scraper ───────────────────────────────────────────────────────────────
     scraper_request_timeout: int = 30
     scraper_max_retries: int = 3
     scraper_delay_seconds: float = 1.5
-    scraper_max_depth: int = 2
-    scraper_max_pages: int = 50
 
     # ── API ───────────────────────────────────────────────────────────────────
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     api_reload: bool = True
-    api_secret_key: str = "change-me-in-production"
 
     # ── RAG ───────────────────────────────────────────────────────────────────
-    chunk_size: int = 500
-    chunk_overlap: int = 50
+    chunk_size: int = 400           # updated: matches DEFAULT_CHUNK_SIZE in embedder.py
+    chunk_overlap: int = 40         # updated: matches DEFAULT_CHUNK_OVERLAP in embedder.py
     top_k_results: int = 5
     similarity_threshold: float = 0.7
 
@@ -65,6 +51,10 @@ class Settings(BaseSettings):
     @property
     def data_dir(self) -> Path:
         return self.base_dir / "data"
+
+    @property
+    def chroma_dir(self) -> Path:
+        return self.base_dir / "chroma_db"
 
 
 # Singleton — import this everywhere: `from config.settings import settings`

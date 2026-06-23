@@ -124,7 +124,7 @@ def scrape_static(url: str) -> dict:
 
     # Raise an error if the page returned a bad status code (404 etc.).
     response.raise_for_status()
-
+ 
     # Keep the FULL, untouched HTML before we start deleting tags below.
     # Phase 3's cleaner (trafilatura) needs this raw HTML to do its own,
     # more accurate boilerplate removal — if we only kept our own

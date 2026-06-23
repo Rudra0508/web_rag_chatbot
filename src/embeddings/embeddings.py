@@ -216,7 +216,7 @@ def embed_chunks(chunks_with_metadata: list[dict], model: SentenceTransformer) -
 def store_in_chromadb(
     chunks_with_metadata: list[dict],
     embeddings: np.ndarray,
-    collection_name: str = DEFAULT_COLLECTION_NAME,
+    collection_name: str = DEFAULT_COLLECTION_NAME
 ) -> None:
     """
     Saves chunks + their embeddings into a local, persistent ChromaDB
@@ -305,7 +305,7 @@ def store_in_chromadb(
 # FUNCTION 6 — process_document (the main pipeline)
 # ──────────────────────────────────────────────────────────────────────────
 
-def process_document(clean_data_dict: dict) -> dict:
+def process_document(clean_data_dict: dict,collection_name: str =DEFAULT_COLLECTION_NAME) -> dict:
     """
     The main function you call from outside this file.
     Takes ONE cleaned document dictionary (exactly what Phase 3's
@@ -357,7 +357,7 @@ def process_document(clean_data_dict: dict) -> dict:
     embeddings = embed_chunks(chunks_with_metadata, model)
 
     # Step 5 — persist everything into the local ChromaDB database.
-    store_in_chromadb(chunks_with_metadata, embeddings)
+    store_in_chromadb(chunks_with_metadata, embeddings,collection_name=collection_name)
 
     print(f"✅ Successfully processed '{source_url}' — {len(chunks)} chunks embedded and stored.")
     logger.success(f"[process_document] Finished Phase 5 pipeline for: {source_url}")
@@ -365,6 +365,7 @@ def process_document(clean_data_dict: dict) -> dict:
     return {
         "chunks_with_metadata": chunks_with_metadata,
         "embeddings": embeddings,
+        "total_chunks": len(chunks_with_metadata)
     }
 
 

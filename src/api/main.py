@@ -118,6 +118,7 @@ class StatusResponse(BaseModel):
     session_id: str
     status: str
     progress_message: str
+    chunks_stored: int
 
 
 # ================================
@@ -199,7 +200,19 @@ def scrape_endpoint(request: ScrapeRequest):
         # EMBEDDINGS
         # --------------------------------
 
-        process_document(clean_data)
+        collection_name = f"session_{session_id}"
+
+        embedding_result = process_document(
+            clean_data,
+            collection_name=collection_name
+        )
+
+        sessions[session_id] = {
+            "url": request.url,
+            "status": "ready",
+            "collection_name": collection_name,
+            "chunks_stored": embedding_result.get("total_chunks", 0)
+        }
 
         # --------------------------------
         # PHASE 7
@@ -210,14 +223,6 @@ def scrape_endpoint(request: ScrapeRequest):
             clean_data,
             groq_client
         )
-
-        # Save session
-
-        sessions[session_id] = {
-            "url": request.url,
-            "status": "ready",
-            "collection_name": "rag_docs"
-        }
 
         return ScrapeResponse(
             session_id=session_id,
@@ -296,5 +301,6 @@ def session_status(session_id: str):
     return StatusResponse(
         session_id=session_id,
         status=session["status"],
-        progress_message="Session is ready"
+        progress_message=f"Ready - {session['chunks_stored']} chunks stored",
+        chunks_stored=session["chunks_stored"]
     )
