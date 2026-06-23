@@ -27,10 +27,6 @@ env/
 .venv/
 ENV/
 
-# ── Data & Models (too large for Git) ────────────────────────────────────────
-data/raw/
-data/processed/
-data/vector_store/
 *.pkl
 *.bin
 *.pt
