@@ -60,3 +60,7 @@ notebooks/.ipynb_checkpoints/
 
 # ── Playwright ────────────────────────────────────────────────────────────────
 playwright/.cache/
+
+ ── Project data (regenerated at runtime, not source code) ─
+chroma_db/
+data/
