@@ -35,7 +35,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Python package needs at runtime (the pip package alone is just
 # the controller, not the browser itself). --with-deps also grabs
 # any remaining OS libraries Chromium needs.
-RUN playwright install --with-deps chromium
+RUN playwright install chromium
 
 # Download spaCy's small English model, used by summarizer.py for
 # named-entity extraction (persons/orgs/locations/dates).
